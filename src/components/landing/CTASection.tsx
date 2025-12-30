@@ -74,13 +74,13 @@ export const CTASection = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Button size="xl" asChild className="group">
-                <Link to="/dashboard">
+                <Link to="/auth">
                   Começar agora
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
               <Button size="xl" variant="outline" asChild>
-                <Link to="/dashboard">
+                <Link to="/auth">
                   Já tenho conta
                 </Link>
               </Button>

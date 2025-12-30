@@ -1,19 +1,31 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Search, Filter, ArrowUpRight, ArrowDownRight, Calendar } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { transactions as mockTransactions } from "@/data/mockData";
 import { formatCurrency, formatFullDate } from "@/lib/finance";
 import { Transaction } from "@/types/finance";
+import { transactionService } from "@/services";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
 
-  const filteredTransactions = mockTransactions.filter((t) => {
+  const apiType =
+    filterType === "income" ? "INCOME" : filterType === "expense" ? "EXPENSE" : undefined;
+
+  const transactionsQuery = useQuery({
+    queryKey: ["transactions", { page: 1, pageSize: 200, type: apiType }],
+    queryFn: () => transactionService.listPaginated({ page: 1, pageSize: 200, type: apiType }),
+  });
+
+  const allTransactions = transactionsQuery.data?.items ?? [];
+
+  const filteredTransactions = allTransactions.filter((t) => {
     const matchesSearch = t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.category.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === "all" || t.type === filterType;
@@ -139,58 +151,69 @@ const Transactions = () => {
       >
         <Card variant="elevated">
           <CardContent className="p-0">
-            <div className="divide-y divide-border/50">
-              {filteredTransactions.map((transaction, index) => (
-                <motion.div
-                  key={transaction.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.03 }}
-                  className="flex items-center justify-between p-4 hover:bg-secondary/30 transition-colors cursor-pointer group"
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-transform group-hover:scale-110"
-                      style={{ backgroundColor: `${transaction.category.color}20` }}
-                    >
-                      {transaction.category.icon}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-foreground">
-                        {transaction.description}
+            {transactionsQuery.isLoading ? (
+              <div className="p-4 space-y-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Skeleton key={i} className="h-16" />
+                ))}
+              </div>
+            ) : filteredTransactions.length === 0 ? (
+              <div className="p-8 text-center text-muted-foreground">
+                Nenhuma transação encontrada
+              </div>
+            ) : (
+              <div className="divide-y divide-border/50">
+                {filteredTransactions.map((transaction, index) => (
+                  <motion.div
+                    key={transaction.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.3 + index * 0.03 }}
+                    className="flex items-center justify-between p-4 hover:bg-secondary/30 transition-colors cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-transform group-hover:scale-110"
+                        style={{ backgroundColor: `${transaction.category.color}20` }}
+                      >
+                        {transaction.category.icon}
                       </div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
-                        <span className="bg-secondary px-2 py-0.5 rounded-md text-xs">
-                          {transaction.category.name}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {formatFullDate(transaction.date)}
-                        </span>
-                        <span className="text-xs">{transaction.paymentMethod}</span>
+                      <div>
+                        <div className="font-semibold text-foreground">
+                          {transaction.description}
+                        </div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
+                          <span className="bg-secondary px-2 py-0.5 rounded-md text-xs">
+                            {transaction.category.name}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {formatFullDate(transaction.date)}
+                          </span>
+                          <span className="text-xs">{transaction.paymentMethod}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`text-lg font-bold ${
-                        transaction.type === "income"
-                          ? "text-income"
-                          : "text-expense"
-                      }`}
-                    >
-                      {transaction.type === "income" ? "+" : "-"}
-                      {formatCurrency(transaction.amount)}
-                    </span>
-                    {transaction.type === "income" ? (
-                      <ArrowUpRight className="w-5 h-5 text-income" />
-                    ) : (
-                      <ArrowDownRight className="w-5 h-5 text-expense" />
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`text-lg font-bold ${transaction.type === "income"
+                            ? "text-income"
+                            : "text-expense"
+                          }`}
+                      >
+                        {transaction.type === "income" ? "+" : "-"}
+                        {formatCurrency(transaction.amount)}
+                      </span>
+                      {transaction.type === "income" ? (
+                        <ArrowUpRight className="w-5 h-5 text-income" />
+                      ) : (
+                        <ArrowDownRight className="w-5 h-5 text-expense" />
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>

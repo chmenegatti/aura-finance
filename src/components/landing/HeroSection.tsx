@@ -51,7 +51,7 @@ export const HeroSection = () => {
               transition={{ delay: 0.4 }}
               className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0"
             >
-              Organize suas finanças de forma simples e visual. Acompanhe gastos, 
+              Organize suas finanças de forma simples e visual. Acompanhe gastos,
               receitas e investimentos em um só lugar com gráficos intuitivos.
             </motion.p>
 
@@ -62,13 +62,13 @@ export const HeroSection = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
               <Button size="xl" asChild className="group">
-                <Link to="/dashboard">
+                <Link to="/auth">
                   Criar conta grátis
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
               <Button size="xl" variant="outline" asChild>
-                <Link to="/dashboard">
+                <Link to="/auth">
                   <Play className="w-5 h-5" />
                   Ver demonstração
                 </Link>

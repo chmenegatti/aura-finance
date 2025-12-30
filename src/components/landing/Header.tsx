@@ -33,10 +33,10 @@ export const Header = () => {
 
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/dashboard">Entrar</Link>
+            <Link to="/auth">Entrar</Link>
           </Button>
           <Button size="sm" asChild>
-            <Link to="/dashboard">Criar Conta</Link>
+            <Link to="/auth">Criar Conta</Link>
           </Button>
         </div>
       </div>

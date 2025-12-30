@@ -1,19 +1,33 @@
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { categories } from "@/data/mockData";
 import { formatCurrency } from "@/lib/finance";
-import { transactions } from "@/data/mockData";
+import { categoryService, transactionService } from "@/services";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Categories = () => {
+  const categoriesQuery = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoryService.list(),
+  });
+
+  const transactionsQuery = useQuery({
+    queryKey: ["transactions", { page: 1, pageSize: 500 }],
+    queryFn: () => transactionService.listPaginated({ page: 1, pageSize: 500 }),
+  });
+
+  const categories = categoriesQuery.data ?? [];
+  const transactions = transactionsQuery.data?.items ?? [];
+
   // Calculate spending per category
   const categorySpending = categories.map(category => {
     const total = transactions
       .filter(t => t.category.id === category.id && t.type === "expense")
       .reduce((acc, t) => acc + t.amount, 0);
-    
+
     const income = transactions
       .filter(t => t.category.id === category.id && t.type === "income")
       .reduce((acc, t) => acc + t.amount, 0);
@@ -53,7 +67,15 @@ const Categories = () => {
 
       {/* Categories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categorySpending.map((category, index) => {
+        {(categoriesQuery.isLoading || transactionsQuery.isLoading) ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-48" />
+          ))
+        ) : categorySpending.length === 0 ? (
+          <div className="col-span-full text-center text-muted-foreground py-12">
+            Nenhuma categoria encontrada
+          </div>
+        ) : categorySpending.map((category, index) => {
           const totalValue = category.totalExpense + category.totalIncome;
           const percentage = maxSpending > 0 ? (totalValue / maxSpending) * 100 : 0;
 

@@ -21,20 +21,20 @@ export const Footer = () => {
 
           {/* Links */}
           <div className="flex items-center gap-6">
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/auth"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Login
             </Link>
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/auth"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Cadastro
             </Link>
-            <a 
-              href="#funcionalidades" 
+            <a
+              href="#funcionalidades"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Funcionalidades

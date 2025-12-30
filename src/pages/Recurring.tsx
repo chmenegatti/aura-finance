@@ -1,13 +1,57 @@
 import { motion } from "framer-motion";
 import { Plus, Calendar, AlertCircle, Pause, Play, MoreHorizontal } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { recurringExpenses } from "@/data/mockData";
 import { formatCurrency } from "@/lib/finance";
+import { recurringExpenseService } from "@/services";
+import type { RecurringExpense, RecurringExpenseDTO } from "@/types/recurringExpense";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function mapRecurringToUi(dto: RecurringExpenseDTO): RecurringExpense {
+  const startDate = new Date(dto.startDate);
+  const endDate = dto.endDate ? new Date(dto.endDate) : null;
+  const now = new Date();
+
+  const isActive = endDate ? endDate.getTime() >= now.getTime() : true;
+  const dueDay = Number.isFinite(startDate.getDate()) ? startDate.getDate() : 1;
+  const frequency = dto.frequency === "MONTHLY" ? "monthly" : dto.frequency === "YEARLY" ? "yearly" : "custom";
+
+  const iconByType: Record<RecurringExpenseDTO["type"], string> = {
+    FINANCING: "🚗",
+    LOAN: "🏦",
+    SUBSCRIPTION: "🔁",
+    OTHER: "📌",
+  };
+
+  return {
+    id: dto.id,
+    description: dto.description,
+    amount: Number(dto.amount),
+    frequency,
+    dueDay,
+    totalInstallments: dto.totalInstallments,
+    currentInstallment: dto.currentInstallment,
+    isActive,
+    category: {
+      id: dto.type,
+      name: dto.type,
+      icon: iconByType[dto.type] ?? "🏷️",
+      color: "hsl(var(--muted-foreground))",
+    },
+  };
+}
 
 const Recurring = () => {
+  const recurringQuery = useQuery({
+    queryKey: ["recurring-expenses", { page: 1, pageSize: 100 }],
+    queryFn: () => recurringExpenseService.listPaginated({ page: 1, pageSize: 100 }),
+  });
+
+  const recurringExpenses = recurringQuery.data?.items.map(mapRecurringToUi) ?? [];
+
   const totalMonthly = recurringExpenses
     .filter(e => e.isActive && e.frequency === "monthly")
     .reduce((acc, e) => acc + e.amount, 0);
@@ -79,7 +123,15 @@ const Recurring = () => {
 
       {/* Recurring Expenses Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {recurringExpenses.map((expense, index) => {
+        {recurringQuery.isLoading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-64" />
+          ))
+        ) : recurringExpenses.length === 0 ? (
+          <div className="col-span-full text-center text-muted-foreground py-12">
+            Nenhum recorrente encontrado
+          </div>
+        ) : recurringExpenses.map((expense, index) => {
           const today = new Date().getDate();
           const isNearDue = expense.dueDay - today <= 5 && expense.dueDay - today >= 0;
           const isPastDue = expense.dueDay < today;
@@ -137,7 +189,7 @@ const Recurring = () => {
                     )}
 
                     <div className="flex items-center justify-between pt-2">
-                      <Badge 
+                      <Badge
                         variant={expense.isActive ? "default" : "secondary"}
                         className={expense.isActive ? "bg-income/20 text-income border-0" : ""}
                       >
