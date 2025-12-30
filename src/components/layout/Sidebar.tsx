@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { path: "/", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/transactions", label: "Transações", icon: ArrowLeftRight },
   { path: "/recurring", label: "Recorrentes", icon: RefreshCcw },
   { path: "/categories", label: "Categorias", icon: Tags },
