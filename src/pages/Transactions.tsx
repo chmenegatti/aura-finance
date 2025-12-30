@@ -22,8 +22,8 @@ const Transactions = () => {
     filterType === "income" ? "INCOME" : filterType === "expense" ? "EXPENSE" : undefined;
 
   const transactionsQuery = useQuery({
-    queryKey: ["transactions", { page: 1, pageSize: 200, type: apiType }],
-    queryFn: () => transactionService.listPaginated({ page: 1, pageSize: 200, type: apiType }),
+    queryKey: ["transactions", { page: 1, pageSize: 100, type: apiType }],
+    queryFn: () => transactionService.listPaginated({ page: 1, pageSize: 100, type: apiType }),
   });
 
   const allTransactions = transactionsQuery.data?.items ?? [];

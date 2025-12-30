@@ -265,13 +265,23 @@ export const TransactionForm = ({ open, onOpenChange, onSuccess }: TransactionFo
               </Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Selecione" />
+                  <SelectValue placeholder="Selecione">
+                    {categoryId && (() => {
+                      const selectedCategory = filteredCategories.find(c => c.id === categoryId);
+                      return selectedCategory ? (
+                        <div className="flex items-center gap-2">
+                          <CategoryIcon iconName={selectedCategory.icon} className="w-4 h-4" />
+                          <span>{selectedCategory.name}</span>
+                        </div>
+                      ) : "Selecione";
+                    })()}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {filteredCategories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       <div className="flex items-center gap-2">
-                        <span>{category.icon}</span>
+                        <CategoryIcon iconName={category.icon} className="w-4 h-4" />
                         <span>{category.name}</span>
                       </div>
                     </SelectItem>

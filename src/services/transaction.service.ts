@@ -29,9 +29,14 @@ export interface Paginated<T> {
 
 export const transactionService = {
   async listPaginated(params?: TransactionListParams): Promise<Paginated<Transaction>> {
+    // Remove undefined values to avoid sending them as strings
+    const cleanParams = params ? Object.fromEntries(
+      Object.entries(params).filter(([_, v]) => v !== undefined)
+    ) : undefined;
+
     const { data } = await api.get<
       ApiResponseSuccess<Paginated<TransactionDTO>>
-    >("/transactions", { params });
+    >("/transactions", { params: cleanParams });
 
     return {
       ...data.data,

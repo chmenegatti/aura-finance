@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Plus, Bell } from "lucide-react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
@@ -8,6 +9,7 @@ import { IncomeExpenseChart } from "@/components/dashboard/IncomeExpenseChart";
 import { BalanceChart } from "@/components/dashboard/BalanceChart";
 import { TransactionList } from "@/components/dashboard/TransactionList";
 import { RecurringExpensesCard } from "@/components/dashboard/RecurringExpensesCard";
+import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { categoryService, dashboardService, recurringExpenseService, transactionService } from "@/services";
@@ -73,6 +75,8 @@ function mapRecurringToUi(dto: RecurringExpenseDTO): RecurringExpense {
 }
 
 const Dashboard = () => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   const summaryQuery = useQuery({
     queryKey: ["dashboard", "summary"],
     queryFn: () => dashboardService.getSummary(),
@@ -149,6 +153,16 @@ const Dashboard = () => {
 
   return (
     <MainLayout>
+      <TransactionForm
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        onSuccess={() => {
+          summaryQuery.refetch();
+          chartsQuery.refetch();
+          transactionsQuery.refetch();
+        }}
+      />
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -169,7 +183,7 @@ const Dashboard = () => {
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full" />
           </Button>
-          <Button variant="income" size="lg" className="gap-2">
+          <Button variant="income" size="lg" className="gap-2" onClick={() => setIsFormOpen(true)}>
             <Plus className="w-5 h-5" />
             <span className="hidden sm:inline">Nova Transação</span>
           </Button>
