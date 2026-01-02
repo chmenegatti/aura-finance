@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsUUID,
   Min,
   Length,
 } from "class-validator";
@@ -50,4 +51,8 @@ export class CreateRecurringExpenseDto {
 
   @IsEnum(RecurringExpenseType)
   type!: RecurringExpenseType;
+
+  @IsNotEmpty()
+  @IsUUID()
+  categoryId!: string;
 }

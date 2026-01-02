@@ -47,6 +47,7 @@ export class RecurringExpenseService {
       currentInstallment: payload.currentInstallment ?? 0,
       type: payload.type,
       userId,
+      categoryId: payload.categoryId,
     });
 
     return entity;
@@ -89,6 +90,10 @@ export class RecurringExpenseService {
 
     if (payload.type) {
       recurringExpense.type = payload.type;
+    }
+
+    if (payload.categoryId !== undefined) {
+      recurringExpense.categoryId = payload.categoryId;
     }
 
     return this.repository.update(recurringExpense);

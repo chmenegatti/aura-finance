@@ -249,6 +249,8 @@ const swaggerDefinition = {
           totalInstallments: { type: "integer" },
           currentInstallment: { type: "integer" },
           type: { type: "string", enum: ["FINANCING", "LOAN", "SUBSCRIPTION", "OTHER"] },
+          categoryId: { type: "string", format: "uuid" },
+          category: { $ref: "#/components/schemas/Category" },
           lastGeneratedAt: { type: "string", format: "date-time", nullable: true },
           userId: { type: "string", format: "uuid" },
           createdAt: { type: "string", format: "date-time" },
@@ -257,7 +259,7 @@ const swaggerDefinition = {
       },
       RecurringExpenseCreateRequest: {
         type: "object",
-        required: ["description", "amount", "startDate", "frequency", "totalInstallments", "type"],
+        required: ["description", "amount", "startDate", "frequency", "totalInstallments", "type", "categoryId"],
         properties: {
           description: { type: "string", example: "Plano de assinatura" },
           amount: { type: "number", example: 199.9 },
@@ -268,6 +270,7 @@ const swaggerDefinition = {
           totalInstallments: { type: "integer", example: 12 },
           currentInstallment: { type: "integer", example: 1 },
           type: { type: "string", enum: ["FINANCING", "LOAN", "SUBSCRIPTION", "OTHER"] },
+          categoryId: { type: "string", format: "uuid" },
         },
       },
       RecurringExpenseUpdateRequest: {
@@ -281,6 +284,7 @@ const swaggerDefinition = {
           customIntervalDays: { type: "integer", nullable: true },
           totalInstallments: { type: "integer" },
           currentInstallment: { type: "integer" },
+          categoryId: { type: "string", format: "uuid" },
           type: { type: "string", enum: ["FINANCING", "LOAN", "SUBSCRIPTION", "OTHER"] },
         },
       },

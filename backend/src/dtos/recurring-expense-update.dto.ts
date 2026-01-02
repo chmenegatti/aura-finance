@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNumber,
   IsOptional,
+  IsUUID,
   Min,
   Length,
 } from "class-validator";
@@ -54,4 +55,8 @@ export class UpdateRecurringExpenseDto {
   @IsOptional()
   @IsEnum(RecurringExpenseType)
   type?: RecurringExpenseType;
+
+  @IsOptional()
+  @IsUUID()
+  categoryId?: string;
 }

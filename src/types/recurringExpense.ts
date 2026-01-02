@@ -30,6 +30,8 @@ export interface RecurringExpenseDTO {
   totalInstallments: number;
   currentInstallment: number;
   type: RecurringExpenseTypeApi;
+  categoryId: string;
+  category: Category;
   lastGeneratedAt: string | null;
   userId: string;
   createdAt: string;
@@ -46,6 +48,7 @@ export interface RecurringExpenseCreateRequest {
   totalInstallments: number;
   currentInstallment?: number | null;
   type: RecurringExpenseTypeApi;
+  categoryId: string;
 }
 
 export interface RecurringExpenseUpdateRequest {
@@ -58,4 +61,5 @@ export interface RecurringExpenseUpdateRequest {
   totalInstallments?: number;
   currentInstallment?: number;
   type?: RecurringExpenseTypeApi;
+  categoryId?: string;
 }

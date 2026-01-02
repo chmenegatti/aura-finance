@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 import { User } from "./user.entity.js";
+import { Category } from "./category.entity.js";
 
 export enum RecurringFrequency {
   MONTHLY = "MONTHLY",
@@ -46,6 +47,13 @@ export class RecurringExpense {
 
   @Column({ type: "text" })
   type!: RecurringExpenseType;
+
+  @Column({ nullable: true })
+  categoryId?: string;
+
+  @ManyToOne(() => Category)
+  @JoinColumn({ name: "categoryId" })
+  category?: Category;
 
   @Column({ type: "datetime", nullable: true })
   lastGeneratedAt?: Date;

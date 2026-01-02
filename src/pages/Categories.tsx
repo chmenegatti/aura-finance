@@ -85,12 +85,18 @@ const Categories = () => {
     const endDate = recurring.endDate ? new Date(recurring.endDate) : null;
     return startDate <= monthEnd && (!endDate || endDate >= monthStart);
   });
-  const recurringMonthlyTotal = currentMonthRecurring.reduce(
-    (acc, recurring) => acc + Number(recurring.amount),
-    0,
-  );
 
-  const baseCategorySpending = categories.map(category => {
+  const recurringByCategory = currentMonthRecurring.reduce<Record<string, number>>((acc, recurring) => {
+    const categoryId = recurring.category?.id ?? recurring.categoryId;
+    if (!categoryId) {
+      return acc;
+    }
+
+    acc[categoryId] = (acc[categoryId] ?? 0) + Number(recurring.amount);
+    return acc;
+  }, {});
+
+  const categorySpending = categories.map(category => {
     const expenses = transactions.filter(
       t => t.category.id === category.id && t.type === "expense",
     );
@@ -100,31 +106,15 @@ const Categories = () => {
 
     const total = expenses.reduce((acc, t) => acc + t.amount, 0);
     const income = incomes.reduce((acc, t) => acc + t.amount, 0);
+    const recurringShare = recurringByCategory[category.id] ?? 0;
 
     return {
       ...category,
       totalExpense: total,
       totalIncome: income,
       transactionCount: transactions.filter(t => t.category.id === category.id).length,
-      recurringShare: 0,
-      totalExpenseWithRecurring: total,
-    };
-  });
-
-  const totalExpenseSum = baseCategorySpending.reduce((acc, category) => acc + category.totalExpense, 0);
-  const outgoingCategoriesCount = baseCategorySpending.filter(c => c.type === "OUTCOMING").length;
-
-  const categorySpending = baseCategorySpending.map(category => {
-    const share = totalExpenseSum > 0
-      ? (category.totalExpense / totalExpenseSum) * recurringMonthlyTotal
-      : category.type === "OUTCOMING" && outgoingCategoriesCount > 0
-        ? recurringMonthlyTotal / outgoingCategoriesCount
-        : 0;
-
-    return {
-      ...category,
-      recurringShare: share,
-      totalExpenseWithRecurring: category.totalExpense + share,
+      recurringShare,
+      totalExpenseWithRecurring: total + recurringShare,
     };
   });
 

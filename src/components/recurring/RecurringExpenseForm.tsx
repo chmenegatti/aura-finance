@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -28,6 +28,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { recurringExpenseService } from "@/services/recurringExpense.service";
+import { categoryService } from "@/services";
+import { useQuery } from "@tanstack/react-query";
 import type { ApiError } from "@/types/api";
 import type { RecurringFrequencyApi, RecurringExpenseTypeApi } from "@/types/recurringExpense";
 
@@ -62,6 +64,19 @@ export const RecurringExpenseForm = ({ open, onOpenChange, onSuccess }: Recurrin
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [totalInstallments, setTotalInstallments] = useState("12");
   const [currentInstallment, setCurrentInstallment] = useState("0");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const categoriesQuery = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => categoryService.list(),
+  });
+
+  const categories = categoriesQuery.data ?? [];
+
+  useEffect(() => {
+    if (!selectedCategoryId && categories.length > 0) {
+      setSelectedCategoryId(categories[0].id);
+    }
+  }, [categories, selectedCategoryId]);
 
   const resetForm = () => {
     setDescription("");
@@ -73,6 +88,7 @@ export const RecurringExpenseForm = ({ open, onOpenChange, onSuccess }: Recurrin
     setEndDate(undefined);
     setTotalInstallments("12");
     setCurrentInstallment("0");
+    setSelectedCategoryId("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,6 +112,15 @@ export const RecurringExpenseForm = ({ open, onOpenChange, onSuccess }: Recurrin
       return;
     }
 
+    if (!selectedCategoryId) {
+      toast({
+        title: "Categoria obrigatória",
+        description: "Selecione a categoria associada ao gasto recorrente.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -109,6 +134,7 @@ export const RecurringExpenseForm = ({ open, onOpenChange, onSuccess }: Recurrin
         totalInstallments: parseInt(totalInstallments),
         currentInstallment: parseInt(currentInstallment),
         type,
+        categoryId: selectedCategoryId,
       });
 
       toast({
@@ -192,6 +218,27 @@ export const RecurringExpenseForm = ({ open, onOpenChange, onSuccess }: Recurrin
               onChange={(e) => setAmount(e.target.value)}
               className="h-12"
             />
+          </div>
+
+          {/* Category Selector */}
+          <div className="space-y-2">
+            <Label htmlFor="category">Categoria *</Label>
+            <Select
+              value={selectedCategoryId}
+              onValueChange={(value) => setSelectedCategoryId(value)}
+              disabled={categoriesQuery.isLoading && !categories.length}
+            >
+              <SelectTrigger id="category" className="h-12">
+                <SelectValue placeholder={categories.length ? "Selecione" : "Carregando..."} />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Frequency */}

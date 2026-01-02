@@ -20,6 +20,7 @@ export class RecurringExpenseRepository {
   async findPaginated(page: number, pageSize: number, userId: string) {
     const [items, total] = await this.repository
       .createQueryBuilder("recurringExpense")
+      .leftJoinAndSelect("recurringExpense.category", "category")
       .where("recurringExpense.userId = :userId", { userId })
       .orderBy("recurringExpense.createdAt", "DESC")
       .skip((page - 1) * pageSize)
