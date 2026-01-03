@@ -5,3 +5,4 @@ export { categoryService } from "./category.service";
 export { recurringExpenseService } from "./recurringExpense.service";
 export { dashboardService } from "./dashboard.service";
 export { receiptService } from "./receipt.service";
+export { creditCardsService } from "@/modules/credit-cards/services/creditCardsService";

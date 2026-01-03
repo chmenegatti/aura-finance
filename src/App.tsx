@@ -11,6 +11,8 @@ import Recurring from "./pages/Recurring";
 import Categories from "./pages/Categories";
 import Receipts from "./pages/Receipts";
 import NotFound from "./pages/NotFound";
+import CreditCardsPage from "@/modules/credit-cards/pages/CreditCardsPage";
+import CreditCardDetailPage from "@/modules/credit-cards/pages/CreditCardDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/credit-cards" element={<CreditCardsPage />} />
+          <Route path="/credit-cards/:id" element={<CreditCardDetailPage />} />
           <Route path="/recurring" element={<Recurring />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/receipts" element={<Receipts />} />

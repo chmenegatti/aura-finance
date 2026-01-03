@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   Wallet,
   LogOut,
+  CreditCard as CreditCardIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import { clearAuthStorage } from "@/services/auth.storage";
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/transactions", label: "Transações", icon: ArrowLeftRight },
+  { path: "/credit-cards", label: "Cartões", icon: CreditCardIcon },
   { path: "/recurring", label: "Recorrentes", icon: RefreshCcw },
   { path: "/categories", label: "Categorias", icon: Tags },
   { path: "/receipts", label: "Comprovantes", icon: FileImage },

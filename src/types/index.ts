@@ -6,3 +6,4 @@ export * from "./transaction";
 export * from "./recurringExpense";
 export * from "./dashboard";
 export * from "./receipt";
+export * from "./credit-card";
