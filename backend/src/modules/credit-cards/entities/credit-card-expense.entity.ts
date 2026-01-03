@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { CreditCard } from "./credit-card.entity.js";
+import type { CreditCard } from "./credit-card.entity.js";
 import { User } from "../../users/entities/user.entity.js";
 
 @Entity("credit_card_expenses")
@@ -11,7 +11,7 @@ export class CreditCardExpense {
   @Column()
   creditCardId!: string;
 
-  @ManyToOne(() => CreditCard, (card) => card.expenses)
+  @ManyToOne("CreditCard", "expenses")
   @JoinColumn({ name: "creditCardId" })
   creditCard!: CreditCard;
 

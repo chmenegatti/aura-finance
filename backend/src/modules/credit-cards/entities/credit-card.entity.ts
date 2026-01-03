@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+import type { CreditCardExpense } from "./credit-card-expense.entity.js";
 import { User } from "../../users/entities/user.entity.js";
-import { CreditCardExpense } from "./credit-card-expense.entity.js";
 
 @Entity("credit_cards")
 export class CreditCard {
@@ -32,7 +32,7 @@ export class CreditCard {
   @Column({ type: "int" })
   dueDay!: number;
 
-  @OneToMany(() => CreditCardExpense, (expense) => expense.creditCard)
+  @OneToMany("CreditCardExpense", "creditCard")
   expenses?: CreditCardExpense[];
 
   @CreateDateColumn()

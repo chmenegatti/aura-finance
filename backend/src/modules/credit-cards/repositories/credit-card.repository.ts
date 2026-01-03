@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 
-import { AppDataSource } from "../../database/data-source.js";
+import { AppDataSource } from "../../../database/data-source.js";
 import { CreditCard } from "../entities/credit-card.entity.js";
 
 type CreateCreditCardPayload = Omit<CreditCard, "id" | "createdAt" | "updatedAt" | "user" | "expenses">;

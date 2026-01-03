@@ -2,7 +2,10 @@ import swaggerJSDoc from "swagger-jsdoc";
 
 import { config } from "../config/index.js";
 
-const routeFiles = process.env.NODE_ENV === "production" ? "dist/routes/*.js" : "src/routes/*.ts";
+const routeFiles =
+  process.env.NODE_ENV === "production"
+    ? ["dist/routes/*.js", "dist/modules/**/*.js"]
+    : ["src/routes/*.ts", "src/modules/**/*.ts"];
 
 const swaggerDefinition = {
   openapi: "3.0.3",
@@ -330,13 +333,108 @@ const swaggerDefinition = {
           },
         },
       },
+      CreditCard: {
+        type: "object",
+        properties: {
+          id: { type: "string", format: "uuid" },
+          userId: { type: "string", format: "uuid" },
+          name: { type: "string" },
+          brand: { type: "string" },
+          lastFourDigits: { type: "string", maxLength: 4 },
+          creditLimit: { type: "string", example: "5000.00" },
+          closingDay: { type: "integer", minimum: 1, maximum: 31 },
+          dueDay: { type: "integer", minimum: 1, maximum: 31 },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+        },
+      },
+      CreditCardCreateRequest: {
+        type: "object",
+        required: ["name", "brand", "lastFourDigits", "creditLimit", "closingDay", "dueDay"],
+        properties: {
+          name: { type: "string" },
+          brand: { type: "string" },
+          lastFourDigits: { type: "string", minLength: 4, maxLength: 4 },
+          creditLimit: { type: "number" },
+          closingDay: { type: "integer", minimum: 1, maximum: 31 },
+          dueDay: { type: "integer", minimum: 1, maximum: 31 },
+        },
+      },
+      CreditCardUpdateRequest: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          brand: { type: "string" },
+          lastFourDigits: { type: "string" },
+          creditLimit: { type: "number" },
+          closingDay: { type: "integer", minimum: 1, maximum: 31 },
+          dueDay: { type: "integer", minimum: 1, maximum: 31 },
+        },
+      },
+      CreditCardExpense: {
+        type: "object",
+        properties: {
+          id: { type: "string", format: "uuid" },
+          creditCardId: { type: "string", format: "uuid" },
+          userId: { type: "string", format: "uuid" },
+          groupId: { type: "string" },
+          description: { type: "string" },
+          amount: { type: "string", example: "123.45" },
+          purchaseDate: { type: "string", format: "date-time" },
+          installments: { type: "integer", minimum: 1 },
+          currentInstallment: { type: "integer", minimum: 1 },
+          invoiceMonth: { type: "string", example: "2026-01" },
+          createdAt: { type: "string", format: "date-time" },
+        },
+      },
+      CreditCardExpenseCreateRequest: {
+        type: "object",
+        required: ["description", "amount", "purchaseDate"],
+        properties: {
+          description: { type: "string" },
+          amount: { type: "number" },
+          purchaseDate: { type: "string", format: "date-time" },
+          installments: { type: "integer", minimum: 1, default: 1 },
+        },
+      },
+      CreditCardExpenseUpdateRequest: {
+        type: "object",
+        properties: {
+          description: { type: "string" },
+          amount: { type: "number" },
+        },
+      },
+      CreditCardInvoiceResponse: {
+        type: "object",
+        properties: {
+          status: { type: "string", example: "success" },
+          data: {
+            type: "object",
+            properties: {
+              invoice: {
+                type: "object",
+                properties: {
+                  invoiceMonth: { type: "string", example: "2026-01" },
+                  isClosed: { type: "boolean" },
+                  closingDay: { type: "integer" },
+                  total: { type: "string", example: "789.00" },
+                  expenses: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/CreditCardExpense" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
 };
 
 const options = {
   definition: swaggerDefinition,
-  apis: [routeFiles],
+  apis: routeFiles,
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
