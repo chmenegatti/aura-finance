@@ -255,9 +255,12 @@ const Transactions = () => {
   const realizedTransactions = filteredTransactions
     .filter((t) => t.date <= today)
     .sort((a, b) => b.date.getTime() - a.date.getTime());
-  const futureTransactions = filteredRecurringTransactions
-    .filter((t) => t.date > today)
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+  const futureManualTransactions = filteredTransactions
+    .filter((t) => t.date > today && !t.id.startsWith("recurring-"));
+  const futureRecurringTransactions = filteredRecurringTransactions.filter((t) => t.date > today);
+  const futureTransactions = [...futureManualTransactions, ...futureRecurringTransactions].sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
+  );
 
   const transactionSections = [
     { key: "realized", title: "Transações realizadas", transactions: realizedTransactions },

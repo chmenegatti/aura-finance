@@ -5,6 +5,8 @@ import { DataSource } from "typeorm";
 
 import { config } from "../config/index.js";
 import { Category } from "../modules/category/entities/category.entity.js";
+import { CreditCard } from "../modules/credit-cards/entities/credit-card.entity.js";
+import { CreditCardExpense } from "../modules/credit-cards/entities/credit-card-expense.entity.js";
 import { RecurringExpense } from "../modules/recurring-expense/entities/recurring-expense.entity.js";
 import { Transaction } from "../modules/transaction/entities/transaction.entity.js";
 import { User } from "../modules/users/entities/user.entity.js";
@@ -26,6 +28,8 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   migrationsRun: false,
   logging: config.nodeEnv === "development",
-  entities: isProduction ? ["dist/entities/*.js"] : [User, Category, Transaction, RecurringExpense],
+  entities: isProduction
+    ? ["dist/entities/*.js"]
+    : [User, Category, CreditCard, CreditCardExpense, Transaction, RecurringExpense],
   migrations: isProduction ? ["dist/database/migrations/*.js"] : ["src/database/migrations/*.ts"],
 });
