@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { format, startOfMonth, endOfMonth, subMonths, startOfYear, endOfYear } from "date-fns";
+import { format, startOfMonth, endOfMonth, subMonths, startOfYear, endOfYear, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,13 @@ interface DateRangeFilterProps {
 }
 
 const presets = [
+  {
+    label: "Até hoje",
+    getValue: () => ({
+      from: startOfYear(new Date()),
+      to: endOfDay(new Date()),
+    }),
+  },
   {
     label: "Este mês",
     getValue: () => ({

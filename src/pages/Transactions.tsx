@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { addDays, addMonths, addYears, endOfDay, endOfMonth, startOfMonth } from "date-fns";
+import { addDays, addMonths, addYears, endOfDay, startOfYear } from "date-fns";
 import {
   Plus,
   Search,
@@ -146,8 +146,8 @@ const Transactions = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: startOfMonth(new Date()),
-    to: endOfMonth(new Date()),
+    from: startOfYear(new Date()),
+    to: endOfDay(new Date()),
   });
   const { toast } = useToast();
 

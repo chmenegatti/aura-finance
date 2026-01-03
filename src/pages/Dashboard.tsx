@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Plus, Bell } from "lucide-react";
 import { useState } from "react";
-import { startOfMonth, endOfMonth, endOfDay, isAfter } from "date-fns";
+import { startOfYear, endOfDay } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
@@ -87,14 +87,12 @@ function mapRecurringToUi(dto: RecurringExpenseDTO): RecurringExpense {
 const Dashboard = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: startOfMonth(new Date()),
-    to: endOfMonth(new Date()),
+    from: startOfYear(new Date()),
+    to: endOfDay(new Date()),
   });
 
-  const today = endOfDay(new Date());
-  const effectiveEndDate = isAfter(dateRange.to, today) ? today : dateRange.to;
   const startDateIso = dateRange.from.toISOString();
-  const endDateIso = effectiveEndDate.toISOString();
+  const endDateIso = dateRange.to.toISOString();
 
   const summaryQuery = useQuery({
     queryKey: ["dashboard", "summary", startDateIso, endDateIso],
