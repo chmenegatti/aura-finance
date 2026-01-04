@@ -9,13 +9,11 @@
       }
     }
   ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" }
-  ],
   "routes": [
     {
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ]
+  ],
+  "outputDirectory": "dist"
 }
